@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload de Arquivos com Netlify Forms</title>
+    <title>Upload de Arquivos Simples (Netlify)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,7 +33,7 @@
             width: 90%;
         }
         button {
-            background-color: #28a745; /* Verde para ação */
+            background-color: #28a745; 
             color: white;
             padding: 10px 20px;
             border: none;
@@ -52,17 +52,8 @@
             padding: 10px;
             background-color: #e9ecef;
             border-radius: 4px;
-            min-height: 20px; /* Para manter o espaço */
-        }
-        #success-message {
-            display: none;
-            padding: 20px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: .25rem;
-            margin-top: 20px;
-            font-size: 1.1em;
+            min-height: 20px; 
+            text-align: left;
         }
     </style>
 </head>
@@ -70,7 +61,7 @@
 
     <div class="container">
         <h1>☁️ Envio de Arquivos (Netlify Forms)</h1>
-        <p>Selecione seu arquivo (PDF ou Imagem) e clique em Realizar Upload.</p>
+        <p>Selecione seu arquivo (PDF ou Imagem).</p>
 
         <form name="file-uploader" 
               method="POST" 
@@ -86,7 +77,7 @@
             <div id="status">Aguardando seleção de arquivo...</div>
         </form>
     </div>
-    
+
     <script src="script.js"></script>
 
 </body>
