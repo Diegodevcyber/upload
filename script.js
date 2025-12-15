@@ -1,46 +1,32 @@
 // script.js
 
-function processarUpload() {
-    const inputElement = document.getElementById('arquivoInput');
-    const statusDiv = document.getElementById('status');
-    const arquivo = inputElement.files[0]; 
+const form = document.getElementById('uploadForm');
+const statusDiv = document.getElementById('status');
+const arquivoInput = document.getElementById('arquivoInput');
+
+// Adiciona um listener para o evento de envio do formulário
+form.addEventListener('submit', function(e) {
     
-    if (!arquivo) {
-        statusDiv.innerHTML = '<span style="color: red;">⚠️ Por favor, selecione um arquivo primeiro.</span>';
+    // Verifica se um arquivo foi selecionado
+    if (!arquivoInput.files.length) {
+        statusDiv.innerHTML = '<span style="color: red;">⚠️ Por favor, selecione um arquivo.</span>';
+        e.preventDefault(); // Impede o envio se não houver arquivo
         return;
     }
 
-    statusDiv.innerHTML = '⌛ **Iniciando o Upload para o Servidor...**';
+    // Altera o status para informar o usuário que o envio começou
+    // O envio real acontece agora, e o Netlify irá redirecionar após o sucesso.
+    statusDiv.innerHTML = '⌛ **Enviando... Não feche a página!**';
+    
+    // O Netlify irá agora processar o formulário. 
+    // Após o sucesso, ele redirecionará o usuário para a página definida no atributo 'action' (no nosso caso, "/success").
+});
 
-    // Cria o objeto que enviará o arquivo
-    const formData = new FormData();
-    // O nome da chave 'uploadedFile' deve ser o mesmo usado no backend (api/upload.js)
-    formData.append('uploadedFile', arquivo); 
-
-    // CHAMA A SERVERLESS FUNCTION NO VERCEL
-    fetch('/api/upload', {
-        method: 'POST',
-        body: formData // Envia o arquivo
-    })
-    .then(response => {
-        // Verifica se a resposta do servidor foi 2xx
-        if (!response.ok) {
-            // Se o servidor retornar 400 ou 500, lança um erro
-            return response.text().then(text => { 
-                throw new Error(`Erro ${response.status}: ${text}`);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        // O servidor respondeu com sucesso!
-        statusDiv.innerHTML = `<span style="color: lightgreen;">✅ Sucesso! Arquivo Salvo Permanentemente no Firebase!</span><br>
-                               **Nome:** ${arquivo.name}<br>
-                               **URL para Acesso:** <a href="${data.url}" target="_blank" style="color: #66b3ff;">Clique para Abrir</a>`;
-    })
-    .catch(error => {
-        // Ocorreu um erro (rede, ou erro 400/500 do servidor)
-        statusDiv.innerHTML = `<span style="color: red;">❌ Erro no Upload:</span><br>${error.message}`;
-        console.error('Erro de Upload:', error);
-    });
-}
+// Opcional: Atualiza o status quando um arquivo é escolhido
+arquivoInput.addEventListener('change', function() {
+    if (this.files.length) {
+        statusDiv.innerHTML = `**Arquivo selecionado:** ${this.files[0].name}`;
+    } else {
+        statusDiv.innerHTML = 'Aguardando seleção de arquivo...';
+    }
+});
