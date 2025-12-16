@@ -2,53 +2,57 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Real para Nuvem</title>
+    <title>Upload Persistente</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #222; color: white; }
-        .box { background: #333; padding: 2rem; border-radius: 10px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        input { margin: 1rem 0; display: block; width: 100%; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        #link { margin-top: 1rem; word-break: break-all; }
-        a { color: #00ffcc; }
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #1a1a1a; color: white; }
+        .box { background: #2a2a2a; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 350px; }
+        input { margin: 15px 0; width: 100%; }
+        button { background: #007bff; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
+        #status { margin-top: 15px; font-size: 14px; }
+        #result { margin-top: 15px; overflow-wrap: break-word; }
+        a { color: #00ffcc; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>📤 Upload para Nuvem</h2>
-        <input type="file" id="fileInput" accept="image/*,.pdf">
-        <button onclick="uploadFile()">Enviar Arquivo</button>
-        <div id="status"></div>
-        <div id="link"></div>
+        <h2>☁️ Envio de Arquivos</h2>
+        <input type="file" id="meuArquivo" accept="image/*,.pdf">
+        <button onclick="fazerUpload()">Realizar Upload</button>
+        <div id="status">Aguardando...</div>
+        <div id="result"></div>
     </div>
 
     <script>
-        async function uploadFile() {
-            const fileInput = document.getElementById('fileInput');
+        async function fazerUpload() {
+            const fileInput = document.getElementById('meuArquivo');
             const status = document.getElementById('status');
-            const linkDiv = document.getElementById('link');
+            const result = document.getElementById('result');
             
-            if (!fileInput.files[0]) return alert("Selecione um arquivo!");
+            if (!fileInput.files[0]) return alert("Selecione um arquivo primeiro!");
 
-            status.innerText = "⏳ Enviando para a nuvem...";
+            status.innerText = "⌛ Enviando para a nuvem...";
+            result.innerHTML = "";
+
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
 
             try {
-                // Substitua pela URL que o Render te der após o deploy
-                const response = await fetch('https://seu-projeto-no-render.onrender.com/upload', {
+                // SUBSTITUA PELA SUA URL DO RENDER ABAIXO:
+                const response = await fetch('https://SUA-URL-AQUI.onrender.com/upload', {
                     method: 'POST',
                     body: formData
                 });
 
                 const data = await response.json();
+                
                 if (data.url) {
-                    status.innerText = "✅ Sucesso!";
-                    linkDiv.innerHTML = `Link do arquivo: <br><a href="${data.url}" target="_blank">${data.url}</a>`;
+                    status.innerText = "✅ Upload Concluído!";
+                    result.innerHTML = `Link permanente:<br><a href="${data.url}" target="_blank">Clique aqui para ver</a>`;
                 } else {
                     status.innerText = "❌ Erro no servidor.";
                 }
             } catch (err) {
-                status.innerText = "❌ Erve de conexão.";
+                status.innerText = "❌ Servidor Offline ou Erro de Conexão.";
                 console.error(err);
             }
         }

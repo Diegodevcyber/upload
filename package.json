@@ -1,6 +1,7 @@
 {
-  "name": "upload-app",
+  "name": "upload-app-cyber",
   "version": "1.0.0",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
