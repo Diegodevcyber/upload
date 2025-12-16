@@ -1,31 +1,32 @@
-// script.js
+const express = require('express');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cors = require('cors');
 
-const form = document.getElementById('uploadForm');
-const statusDiv = document.getElementById('status');
-const arquivoInput = document.getElementById('arquivoInput');
+const app = express();
+app.use(cors());
 
-// 1. Feedback ao selecionar o arquivo
-arquivoInput.addEventListener('change', function() {
-    if (this.files.length) {
-        statusDiv.innerHTML = `**Arquivo selecionado:** ${this.files[0].name}`;
-    } else {
-        statusDiv.innerHTML = 'Aguardando seleção de arquivo...';
-    }
+// CONFIGURAÇÃO DO CLOUDINARY (Pegue no site do Cloudinary - Grátis)
+cloudinary.config({
+  cloud_name: 'seu_cloud_name',
+  api_key: 'sua_api_key',
+  api_secret: 'sua_api_secret'
 });
 
-// 2. Feedback ao iniciar o envio
-form.addEventListener('submit', function(e) {
-    
-    // Verifica se há um arquivo para upload
-    if (!arquivoInput.files.length) {
-        statusDiv.innerHTML = '<span style="color: red;">⚠️ Por favor, selecione um arquivo.</span>';
-        e.preventDefault(); 
-        return;
-    }
-
-    // Altera o status ANTES do envio real para dar feedback
-    statusDiv.innerHTML = '⌛ **Enviando... Não feche a página!**';
-    
-    // O navegador continuará o processo de envio POST, 
-    // e o Netlify Forms cuidará do resto e do redirecionamento para /success.
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'uploads_github',
+    resource_type: 'auto' // Permite PDF e Imagens
+  },
 });
+
+const upload = multer({ storage: storage });
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  res.json({ url: req.file.path });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
