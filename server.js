@@ -7,10 +7,10 @@ const path = require('path');
 
 const app = express();
 
-// 1. Configurar CORS primeiro
+// 1. Habilitar CORS para permitir que a Vercel envie dados
 app.use(cors());
 
-// 2. Configuração Cloudinary
+// 2. Configuração Cloudinary (Já está ok no seu Render)
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -27,16 +27,16 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-// 3. Rota de Upload (DEVE vir antes do static)
+// 3. ROTA DE UPLOAD - Deve vir ANTES de qualquer arquivo estático
 app.post('/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
   }
-  console.log("Upload bem sucedido:", req.file.path);
+  console.log("Upload realizado com sucesso!");
   res.json({ url: req.file.path });
 });
 
-// 4. Servir arquivos estáticos (DEPOIS das rotas de API)
+// 4. Servir arquivos estáticos (Só depois das rotas de API)
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
