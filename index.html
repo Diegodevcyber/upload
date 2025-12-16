@@ -37,23 +37,23 @@
             formData.append('file', fileInput.files[0]);
 
             try {
-                // IMPORTANTE: URL apontando para o seu Render com /upload no final
+                // Envia para o Render
                 const response = await fetch('https://meuupload.onrender.com/upload', {
                     method: 'POST',
                     body: formData
                 });
-
-                if (!response.ok) throw new Error('Servidor ainda está acordando...');
 
                 const data = await response.json();
                 
                 if (data.url) {
                     status.innerText = "✅ Upload Concluído!";
                     result.innerHTML = `Link permanente:<br><a href="${data.url}" target="_blank">Clique aqui para ver</a>`;
+                } else {
+                    status.innerText = "❌ Erro: " + (data.error || "Erro no servidor.");
                 }
             } catch (err) {
-                status.innerText = "❌ Erro de Conexão. Verifique se o servidor no Render está acordado (aguarde 1 min e tente de novo).";
-                console.error(err);
+                status.innerText = "❌ Erro de Conexão. O servidor Render pode estar acordando. Aguarde 30s e tente de novo.";
+                console.error("Detalhes do erro:", err);
             }
         }
     </script>
