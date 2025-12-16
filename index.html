@@ -38,7 +38,9 @@
 
             try {
                 // Envia para o Render
-                const response = await fetch('https://meuupload.onrender.com/upload', {
+        
+                // TEM QUE TER O /upload NO FINAL
+                const response = await fetch('https://meuupload.onrender.com/upload', { 
                     method: 'POST',
                     body: formData
                 });
