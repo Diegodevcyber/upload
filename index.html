@@ -51,10 +51,12 @@
                 } else {
                     status.innerText = "❌ Erro: " + (data.error || "Erro no servidor.");
                 }
+            
             } catch (err) {
-                status.innerText = "❌ Erro de Conexão. O servidor Render pode estar acordando. Aguarde 30s e tente de novo.";
-                console.error("Detalhes do erro:", err);
-            }
+                 // Isso vai mostrar o erro real no seu site em vez de uma mensagem genérica
+                status.innerText = "❌ Erro: " + err.message;
+                console.log(err);
+}
         }
     </script>
 </body>
