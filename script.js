@@ -9,9 +9,9 @@ app.use(cors());
 
 // CONFIGURAÇÃO DO CLOUDINARY (Pegue no site do Cloudinary - Grátis)
 cloudinary.config({
-  cloud_name: 'seu_cloud_name',
-  api_key: 'sua_api_key',
-  api_secret: 'sua_api_secret'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 const storage = new CloudinaryStorage({
