@@ -3,13 +3,13 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cors = require('cors');
-const path = require('path'); // Adicionado para lidar com caminhos
+const path = require('path');
 
 const app = express();
 app.use(cors());
 
-// Serve os arquivos estáticos (seu index.html)
-app.use(express.static(path.join(__code, './')));
+// CORREÇÃO: Usando __dirname para servir os arquivos da pasta atual
+app.use(express.static(__dirname));
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -27,13 +27,15 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-// Rota principal: Agora ela vai carregar o seu index.html em vez de apenas texto
+// Rota principal: Serve o seu index.html corretamente
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__code, 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
+  if (!req.file) {
+    return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
+  }
   res.json({ url: req.file.path });
 });
 
