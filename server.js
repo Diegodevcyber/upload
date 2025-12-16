@@ -3,11 +3,14 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cors = require('cors');
+const path = require('path'); // Adicionado para lidar com caminhos
 
 const app = express();
 app.use(cors());
 
-// Configuração usando as Variáveis de Ambiente do Render
+// Serve os arquivos estáticos (seu index.html)
+app.use(express.static(path.join(__code, './')));
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -18,23 +21,21 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'uploads_cyber',
-    resource_type: 'auto' // Aceita PDF e Imagens
+    resource_type: 'auto'
   },
 });
 
 const upload = multer({ storage: storage });
 
-// Rota que recebe o arquivo do seu HTML
-app.post('/upload', upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
-  }
-  // Retorna o link seguro gerado pelo Cloudinary
-  res.json({ url: req.file.path });
+// Rota principal: Agora ela vai carregar o seu index.html em vez de apenas texto
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__code, 'index.html'));
 });
 
-// Rota de teste
-app.get('/', (req, res) => res.send('Servidor de Upload Online! ✅'));
+app.post('/upload', upload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
+  res.json({ url: req.file.path });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
