@@ -10,11 +10,11 @@ const app = express();
 // 1. Habilitar CORS para permitir que a Vercel envie dados
 app.use(cors());
 
-// 2. Configuração Cloudinary (Já está ok no seu Render)
+// Substitua a configuração do Cloudinary no seu server.js por esta:
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME.trim(),
+  api_key: process.env.CLOUDINARY_API_KEY.trim(),
+  api_secret: process.env.CLOUDINARY_API_SECRET.trim()
 });
 
 const storage = new CloudinaryStorage({
