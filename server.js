@@ -5,27 +5,34 @@ const multer = require('multer');
 const cors = require('cors');
 
 const app = express();
+
+// 1. Aumentar o limite de leitura do Express para arquivos grandes
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 
-// Configuração corrigida com as variáveis do Render
+// 2. Configuração do Cloudinary (Usando seus dados confirmados)
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dmy2iazgs',
+  api_key: process.env.CLOUDINARY_API_KEY || '989796475711838',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'mrMV9-M7yXqBeEKreBNZbVorA9Y'
 });
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'uploads_cyber',
-    resource_type: 'auto',
-    allowed_formats: ['jpg', 'png', 'pdf']
+    resource_type: 'auto', // Permite PDFs e imagens
   },
 });
 
-const upload = multer({ storage: storage });
+// 3. Configurar Multer com limite de 50MB
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 50 * 1024 * 1024 } 
+});
 
-// Rota de Upload com tratamento de erro detalhado
+// 4. Rota de Upload
 app.post('/upload', (req, res) => {
   upload.single('file')(req, res, (err) => {
     if (err) {
@@ -35,7 +42,6 @@ app.post('/upload', (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
     }
-    console.log("Upload sucesso!");
     res.json({ url: req.file.path });
   });
 });
